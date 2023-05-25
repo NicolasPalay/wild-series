@@ -1,0 +1,13 @@
+
+{# #templates/category/new.html.twig #}
+
+{% extends "base.html.twig" %}
+
+{% block content %}
+    <div class="container mt-5">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit">Add program</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

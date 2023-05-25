@@ -1,1 +1,12 @@
-<h1>Program {{ id }}.</h1>
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Series - {{program.title }}{% endblock %}
+
+{% block content %}
+<h1>{{program.title }}.</h1>
+    <em><a href="/program/category?id={{ program.category.id }}">Catégorie : {{ program.category.name }}</a></em>
+    <p>{{ program.synopsis }}</p>
+    <a href="{{ path('program_index') }}">
+        Retour à la liste des programmes
+    </a>
+{% endblock %}

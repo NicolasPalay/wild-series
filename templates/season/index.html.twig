@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SeansonController!{% endblock %}
+
+{% block content %}
+    <ul class="description">
+{% for season in seasons %}
+    <li>
+        <a href="{#  path("season_show", { id: season.id }) }}#}">
+
+               {{ season.number }}-{{ season.program.title }}
+
+
+        </a></li>
+{% endfor %}
+    </ul>
+{% endblock %}

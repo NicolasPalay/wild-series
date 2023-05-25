@@ -2,17 +2,19 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Category;
+use Symfony\Component\HttpFoundation\Response;
+use App\Entity\Program;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @Group Category
+ * @Group program
  */
-class CategoryFixtures extends Fixture
+class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+
     public function series(): ?array {
 
         $apiKey = '20f40f4e8301';
@@ -31,21 +33,32 @@ class CategoryFixtures extends Fixture
         }
         return null;
     }
+
     public function load(ObjectManager $manager): void
     {
+
         $shows = $this->series();
-        foreach ($shows as $show) {
+        foreach ($shows as $show){
+            $program = new Program();
+            $program->setTitle($show['title']);
+            $program->setSynopsis($show['description']);
+            $program->setPoster($show['images']['poster']);
             $genres = $show['genres'];
 
-                foreach ($genres as $categoryName) {
-                    if (!$this->hasReference('category_' . $categoryName)) {
-                    $category = new Category();
-                    $category->setName($categoryName);
-                    $manager->persist($category);
-                    $this->addReference('category_' . $categoryName, $category);
-                    }break;
-            }
+            foreach ( $genres as $key => $genre) {
+                $program->setCategory($this->getReference('category_'.$genre));
+                break;
+             }
+            $manager->persist($program);
+            $this->addReference('program_' . $show['title'], $program);
         }
         $manager->flush();
+    }
+
+    public function getDependencies()
+    {
+        return [
+            CategoryFixtures::class,
+        ];
     }
 }

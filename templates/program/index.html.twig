@@ -3,6 +3,27 @@
 {% block title %}Wild Series{% endblock %}
 
 {% block content %}
-    <h1>{{ website }} index</h1>
-    <img src="{{ asset('build/images/chili_con_carne_2.jpg') }}" alt=""/>
+    <h1>Toutes les series</h1>
+    <main>
+    <section>
+    <ul class="listAllSeries">
+    {% for program in programs %}
+    <li>
+        <div>
+            <a href="{{ path("program_show", { id: program.id }) }}">
+                <ul class="description">
+                    <li>{{ program.title }}</li>
+                    <li>
+                        <em><a href="">{{ program.category.name }}</a></em>
+                    </li>
+                    <li><p>{{ program.synopsis | striptags|slice(0, 75,) }}</p></li>
+                </ul>
+            </a>
+        </div>{% if program.poster starts with 'http' %}
+        <img src="{{ program.poster }}" alt="">
+{% else %}
+    <img src="/uploads/{{ program.poster }}" alt="">
+    {% endif %}
+        {% endfor %}
+
 {% endblock %}

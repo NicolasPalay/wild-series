@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Actor;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Program;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -53,6 +54,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $this->addReference('program_' . $show['title'], $program);
         }
         $manager->flush();
+
     }
 
     public function getDependencies()

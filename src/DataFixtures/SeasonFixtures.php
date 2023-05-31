@@ -33,22 +33,27 @@ class SeasonFixtures extends Fixture implements DependentFixtureInterface
         }
         return null;
     }
-
+    const SEASONS =[
+        1,2,3,4
+    ];
     public function load(ObjectManager $manager): void
     {
 
         $seasons = $this->series();
-        foreach ($seasons as $numberSeason) {
+        foreach (self::SEASONS as $seas) {
+             foreach ($seasons as $numberSeason) {
             //if (!$this->hasReference('season_' . $numberSeason['seasons'])) {
                 $season = new Season();
                 $season->setProgram($this->getReference('program_' . $numberSeason['title']));
-                $season->setnumber($numberSeason['seasons']);
+
+                $season->setnumber($seas);
+
                 $season->setYear($numberSeason['creation']);
                 $season->setDescription($numberSeason['description']);
 
                 $manager->persist($season);
-                $this->addReference('season_' . $numberSeason['seasons'].'-'.$numberSeason['title'], $season);
-
+                $this->addReference('season_' . $seas.'-'.$numberSeason['title'], $season);
+        }
             }
        // }
         $manager->flush();

@@ -1,17 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SeansonController!{% endblock %}
+{% block title %}Season index{% endblock %}
 
 {% block content %}
-    <ul class="description">
-{% for season in seasons %}
-    <li>
-        <a href="{#  path("season_show", { id: season.id }) }}#}">
+    <main>
+        <section class="container mt-5 mb-4 ">
+            <h1>Toutes les saisons</h1>
 
-               {{ season.number }}-{{ season.program.title }}
+            <article class="listAllCategory m-auto mb-5 p-2 w-75">
+                <ul>
+                    {% for season in seasons %}
+                        <li>{{ season.program.title }}</li>
+                        <li>{{ season.number }}</li>
+                        <li>{{ season.year }}</li>
+                        <li>{{ season.description }}</li>
+
+                        <li>
+                            <a href="{{ path('app_season_show', {'id': season.id}) }}">show</a>
+                            <a href="{{ path('app_season_edit', {'id': season.id}) }}">edit</a>
+                        </li>
+                        <hr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">no records found</td>
+                        </tr>
+                    {% endfor %}
+                </ul>
 
 
-        </a></li>
-{% endfor %}
-    </ul>
+                <a href="{{ path('app_season_new') }}">Create new</a>
+            </article>
+        </section>
+    </main>
 {% endblock %}

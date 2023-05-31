@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Episode{% endblock %}
+
+{% block content %}
+    <section class="container">
+        <h1>Episode</h1>
+        <div class="listOneSery">
+            <ul>
+                <li>{{ episode.id }}</li>
+                <li>{{ episode.title }}</li>
+            </ul>
+
+            <a href="{{ path('app_episode_index') }}">back to list</a>
+
+            <a href="{{ path('app_episode_edit', {'id': episode.id}) }}">edit</a>
+
+            {{ include('episode/_delete_form.html.twig') }}
+    </section>
+{% endblock %}

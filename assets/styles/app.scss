@@ -11,12 +11,17 @@
 body {
     background-color: #2e2d2c;
 }
-h1, a,p,li{color:white;}
+a{text-decoration: none}
+a:hover{color:#C7A12E !important;}
+h1, a,a:active,p,li,.active, td{color:white;}
+h1{color:#C7A12E;margin :30px auto;text-align: center }
+hr{color:#C7A12E}
 
 ul {
     list-style: none;
 }
-
+.logo{width: 120px}
+.imgHome{width: 100%;box-shadow: 0 21px 32px 4px rgba(61, 72, 123, 1);margin-bottom: 30px}
 main {
     width: 100%;
     display: flex;
@@ -25,27 +30,28 @@ main {
     justify-content: space-around;
 }
 
-.listAllSeries {
+.listAllSeries,.listOneSery {
     width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-around;
+    margin-bottom: 30px;
 }
 
-.listAllSeries li img {
-    width: 255px;
+.listAllSeries li img,.listOneSery img {
+    width: 255px; height:100%;
     border-radius: 20px;
 }
 
-.listAllSeries> li {
+.listAllSeries> li, .listOneSery{
     border-radius: 20px;
     position: relative;margin-bottom: 40px;
     box-shadow: 0 13px 32px 0 rgba(61, 72, 123, 0.5);
 }
 .listAllSeries .description li{padding:30px 0}
 .listAllSeries li:hover > div {
-    height: 99%;
+    height: 100%;
     opacity: 1
 }
 
@@ -59,7 +65,7 @@ main {
     height: 0;
     padding: 20px;
     transition: 0.4s;
-    bottom: 1px;
+    bottom: 0;
     opacity: 0;
     overflow:hidden;
 }
@@ -85,7 +91,36 @@ aside li div{padding:10px;}
 .titleSerie{position: relative;width: 100%}
 .titleSerie img{width: 100%}
 .titleSerie h1{position: absolute;padding: 50px;color:white}
+.listOneSery{margin: 30px auto}
+.listOneSery div {width:60%}
+.listOneSery em{display: block;color:white}
+.listOneSery p {margin:30px 20px}
+div.seasonProgram{display: flex;flex-direction: row;width: 100%}
+.seasonProgram> div {width: 100%}
 
-/*New catagory */
-.labelCategory{color:#C7A12E;display:block}
-.inputCategory{width:300px}
+/*New catagory program season episode*/
+.labelCategory,.labelProgram,#episode label[for="episode_season"],#program label[for='program_actors'],
+#program label[for="program_category"], #season label[for='season_program'],
+#category label:last-child{color:#C7A12E;display:block}
+.inputCategory, .inputProgram, #program select:last-child, #season select:last-child{width:300px}
+.buttonNew{background-color: #6979c7;margin:20px auto 40px}
+
+.buttonNew:hover{background-color: #C7A12E;}
+#program,#category,#season,#episode{width: fit-content;margin:20px auto; padding :20px}
+#program label,#category label,#season label,#episode label{margin-top:20px;margin-bottom:10px;display:block}
+.listAllCategory form { display: flex;flex-direction: column;align-items: center}
+.episodeList{display: flex;flex-direction: row;flex-wrap: wrap;}
+.episodeList ul{display: flex;flex-direction: row;flex-wrap: wrap;width:150px;margin:20px auto; padding :20px;box-shadow: 0 21px 32px 4px rgba(61, 72, 123, 0.5);}
+
+/*category*/
+.minImg{width:100px; border-radius: 20px;}
+.listAllCategory{ border-radius: 20px;width:50%;
+    position: relative;margin: 20px 0;
+    box-shadow: 0 13px 32px 0 rgba(61, 72, 123, 0.5);}
+
+
+/*menu*/
+.navSerie, .navbar{background-color: #6979c7 !important;padding : 0 !important;box-shadow: 0 21px 32px 4px rgba(61, 72, 123, 1);}
+.catNav{background-color: #6979c7 !important;box-shadow: 0 21px 32px 4px rgba(61, 72, 123, 1);}
+.navSerie a, .navbar-expand-lg .navbar-nav .nav-link{color:white;padding: 25px}
+.navSerie li:hover{color:#C7A12E;box-shadow: 0 21px 32px 4px rgba(61, 72, 123, 1);background-color:rgba(61, 72, 123, 1) !important;}

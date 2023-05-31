@@ -1,12 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Wild Series - {{program.title }}{% endblock %}
+{% block title %}Wild Series - {{ program.title }}{% endblock %}
 
 {% block content %}
-<h1>{{program.title }}.</h1>
-    <em><a href="/program/category?id={{ program.category.id }}">Catégorie : {{ program.category.name }}</a></em>
-    <p>{{ program.synopsis }}</p>
-    <a href="{{ path('program_index') }}">
-        Retour à la liste des programmes
-    </a>
+
+    <section class="container">
+        <h1>{{ program.title }}.</h1>
+        <div class="listOneSery p-4">
+
+            {% if program.poster starts with 'http' %}
+                <img src="{{ program.poster }}" alt="">
+            {% else %}
+                <img src="/uploads/{{ program.poster }}" alt="">
+            {% endif %}
+
+            <em><a href="{{ path("category_show", { categoryName: program.category.name, id: program.category.id }) }}">Catégorie
+                    : {{ program.category.name }}</a></em>
+            <ul>
+                {% for actor in program.actors %}
+                    <li>{{ actor.name }}</li>
+                {% else %}
+                    <li>Aucun acteur pour cette série</li>
+                {% endfor %}
+            </ul>
+            <p>{{ program.synopsis }}</p>
+            <div class="seasonProgram">
+                {% for season in seasons %}
+                    <div>
+                        <em>Saison : {{ season.number }}</em>
+                        <em>année : {{ season.year }}</em>
+                        {% for episode in season.episodes %}
+
+                        <em><a href="{{ path('app_episode_show', {'id': episode.id}) }}">name d'épisode
+                                : {{ episode.title }}</a></em>
+                        {% endfor %}}
+                    </div>
+                {% endfor %}
+
+                {{ include('program/_delete_form.html.twig') }}
+            </div>
+
+        </div>
+
+        <a href="{{ path('program_index') }}">
+            Retour à la liste des programmes
+        </a>
+    </section>
 {% endblock %}

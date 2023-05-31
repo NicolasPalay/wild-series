@@ -4,10 +4,21 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
-    <div class="container mt-5">
-        {{ form_start(form) }}
+    <section class="container mt-5">
+        <h1>Ajoutez une série</h1>
+        <article class="listAllCategory m-auto">
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
         {{ form_widget(form) }}
-        <button type="submit">Add program</button>
+        <button class="btn buttonNew">{{ button_label|default('Save') }}</button>
+            {% for category, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {{ form_end(form) }}
-    </div>
+        </article>
+    </section>
 {% endblock %}

@@ -31,20 +31,22 @@ class EpisoleFixtures extends Fixture implements DependentFixtureInterface
     }
 
     const EPISODES = ['Forte', 'emotion', 'vitesse', 'arrété', 'police', 'accident', 'violence'];
-
+    const SEASONS =[
+        1,2,3,4
+    ];
     public function load(ObjectManager $manager): void
     {
         $seasons = $this->series();
-        foreach ($seasons as $numberSeason) {
-            foreach (self::EPISODES as $nameEpisode) {
-            $episode = new Episode();
-            $episode->setSeason($this->getReference('season_' . $numberSeason['seasons'] . '-' . $numberSeason['title']));
+        foreach (self::SEASONS as $seas) {
+            foreach ($seasons as $numberSeason) {
+                foreach (self::EPISODES as $nameEpisode) {
+                    $episode = new Episode();
+                    $episode->setSeason($this->getReference('season_' . $seas . '-' . $numberSeason['title']));
+                    $episode->setTitle($nameEpisode);
+                    $manager->persist($episode);
+                }
 
-                $episode->setTitle($nameEpisode);
-                $manager->persist($episode);
             }
-
-
 
         }
         $manager->flush();

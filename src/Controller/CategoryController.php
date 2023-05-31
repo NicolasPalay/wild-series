@@ -11,12 +11,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/category',name:'category_')]
 class CategoryController extends AbstractController
 {
-    #[Route('/category/', name: 'category_index')]
+    /**
+     * List all category order by DESC and limit 3
+     *
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     */
+        #[Route('/', name: 'index')]
     public function index(CategoryRepository $categoryRepository): Response
     {
         $categories = $categoryRepository->findAll();
+
         return $this->render('category/index.html.twig', [
             'categories' => $categories,
         ]);
@@ -24,7 +32,7 @@ class CategoryController extends AbstractController
     /**
      * @Route("/category/new", name="category_new")
      */
-    #[Route('/new', name: 'category_new')]
+    #[Route('/new', name: 'new')]
     public function new(Request $request, CategoryRepository $categoryRepository): Response
     {
         $category = new Category();
@@ -48,20 +56,36 @@ class CategoryController extends AbstractController
     }
 
     /**
+     *List one category with programs
+     *
+     * @param ProgramRepository $programRepository
+     * @param CategoryRepository $categoryRepository
+     * @return Response
+     *
      * @Route("/category/{categoryName}", name="category_show")
      */
-    #[Route('/category/{categoryName}', name: 'category_show')]
+    #[Route('/{categoryName}', name: 'show')]
     public function show(ProgramRepository $programRepository, CategoryRepository $categoryRepository, string $categoryName): Response
     {
+        /** @var  $category */
         $category = $categoryRepository->findOneBy(['name' => $categoryName]);
-
+       // $programs =$category->
         $id = $category->getId();
-        $programs = $programRepository->findBy(['category' => $id]);
+        $programs = $programRepository->findBy(['category' => $id],['id' => 'DESC'],1);
+        //$programs = $programRepository->findByCategory($category,['id' => 'DESC'],1);
+
+
+        if(null===$category) {
+            throw $this->createNotFoundException('No category');
+        }
+
         return $this->render('category/show.html.twig', [
             'category' => $category,
             'programs' => $programs
         ]);
     }
+
+
 
 
 }

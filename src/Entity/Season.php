@@ -16,41 +16,29 @@ class Season
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'season')]
-    private ?Program $program = null;
-
     #[ORM\Column]
     private ?int $number = null;
 
     #[ORM\Column]
     private ?int $year = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
-    private Collection $title;
+    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    private ?Program $program = null;
+
+        #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class, cascade: ['remove'])]
+    private Collection $episodes;
 
     public function __construct()
     {
-        $this->title = new ArrayCollection();
+        $this->episodes = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getProgram(): ?Program
-    {
-        return $this->program;
-    }
-
-    public function setProgram(?Program $program): self
-    {
-        $this->program = $program;
-
-        return $this;
     }
 
     public function getNumber(): ?int
@@ -82,9 +70,21 @@ class Season
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getProgram(): ?program
+    {
+        return $this->program;
+    }
+
+    public function setProgram(?program $program): self
+    {
+        $this->program = $program;
 
         return $this;
     }
@@ -92,27 +92,27 @@ class Season
     /**
      * @return Collection<int, Episode>
      */
-    public function getTitle(): Collection
+    public function getEpisodes(): Collection
     {
-        return $this->title;
+        return $this->episodes;
     }
 
-    public function addTitle(Episode $title): self
+    public function addEpisode(Episode $episode): self
     {
-        if (!$this->title->contains($title)) {
-            $this->title->add($title);
-            $title->setSeason($this);
+        if (!$this->episodes->contains($episode)) {
+            $this->episodes->add($episode);
+            $episode->setSeason($this);
         }
 
         return $this;
     }
 
-    public function removeTitle(Episode $title): self
+    public function removeEpisode(Episode $episode): self
     {
-        if ($this->title->removeElement($title)) {
+        if ($this->episodes->removeElement($episode)) {
             // set the owning side to null (unless already changed)
-            if ($title->getSeason() === $this) {
-                $title->setSeason(null);
+            if ($episode->getSeason() === $this) {
+                $episode->setSeason(null);
             }
         }
 

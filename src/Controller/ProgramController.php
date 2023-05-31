@@ -2,50 +2,66 @@
 // src/Controller/ProgramController.php
 namespace App\Controller;
 
+use App\Entity\Episode;
 use App\Entity\Program;
+use App\Entity\Season;
 use App\Form\ProgramType;
+use App\Repository\EpisodeRepository;
 use App\Repository\ProgramRepository;
+use App\Repository\SeasonRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
+
 class ProgramController extends AbstractController
 {
+
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
     /**
      * @Route("/program/", name="program_index")
      */
     #[Route('/program/', name: 'program_index')]
 
-    public function index(ProgramRepository $programRepository): Response
+    public function index(ProgramRepository $programRepository, Request $request): Response
     {
+        $session=$request->getSession();
+        if ($session->has('nbVisite')) {
+            $nbreVisite = $session->get('nbVisite')+1;
+
+        }else {
+            $nbreVisite = 1;
+        }
+        $session->set('nbVisite',$nbreVisite);
+
         $programs = $programRepository->findAll();
         return $this->render('program/index.html.twig', [
             'programs' => $programs,
+
         ]);
     }
-    #[Route('/show/{id<^[0-9]+$>}', name: 'program_show')]
-    public function show(ProgramRepository $programRepository, int $id): Response
-    {
-        $program = $programRepository->findOneBy(['id' => $id]);
-        if (!$program) {
-            throw $this->createNotFoundException(
-                'No program with id : '.$id.' found in program\'s table.'
-            );
-        }
-        return $this->render('program/show.html.twig', [
-            'program' => $program,
-        ]);
-    }
+
 #[Route('/program/new',name : 'program_new')]
     public function new(Request $request, ProgramRepository $programRepository,SluggerInterface $slugger):Response
     {
     $program = new Program();
     $form = $this->createForm(ProgramType::class,$program);
     $form->handleRequest($request);
-    if ($form->isSubmitted()) {
+    if ($form->isSubmitted() && $form->isValid()) {
+
+
         /** @var UploadedFile $file */
         $file = $form->get('poster')->getData();
         //dd($file);
@@ -63,23 +79,45 @@ class ProgramController extends AbstractController
             }
         }
         $program->setPoster($newFilename);
+        $selectedActors = $form->get('actors')->getData();
+        foreach ($selectedActors as $actor) {
+            $program->addActor($actor);
+            $actor->addProgram($program);
+            }
+
         $programRepository->save($program, true);
+        $this->addFlash('success', 'The new program has been created');
         return $this->redirectToRoute('program_index');
     }
     return $this->render('program/new.html.twig', [
-        'form'=>$form
+        'form'=>$form,'program'=>$program
     ]);
     }
 
-        #[Route('/program/list/{page}', requirements: ['page'=>'\d+'], name:'program_list')]
-     public function list(int $page = 1): Response
-     {
-         return $this->render('program/list.html.twig', ['page' => $page]);
-     }
-
-    #[Route('/program/{id}', requirements: ['id'=>'\d+'],methods: ['GET'], name:'program_id')]
-    public function show2(int $id = 1): Response
+    #[Route('/program/{id}', name: 'program_show')]
+    public function show(ProgramRepository $programRepository,SeasonRepository $seasonRepository, EpisodeRepository $episodeRepository, $id
+        //Program $program,Season $season, Episode $episode
+    ): Response
     {
-        return $this->render('program/show.html.twig', ['id' => $id]);
+        $program = $programRepository->findOneBy(['id' => $id]);
+        $seasons = $seasonRepository->findby(['program' => $program]);
+        $episodes = $episodeRepository->findby(['season' => $seasons]);
+
+
+        return $this->render('program/show.html.twig', [
+            'program' => $program,
+            'seasons'=>$seasons,
+            'episodes'=>$episodes
+        ]);
     }
+    #[Route('/program/{id}', name: 'program_delete', methods: ['POST'])]
+    public function delete(Request $request, Program $program, ProgramRepository $programRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$program->getId(), $request->request->get('_token'))) {
+            $programRepository->remove($program, true);
+        }
+
+        return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+    }
+
 }

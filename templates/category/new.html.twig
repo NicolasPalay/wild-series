@@ -4,10 +4,14 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
-    <div class="container mt-5">
+
+        <section class="container mt-5">
+            <h1>Ajoutez une série</h1>
+            <article class="listAllCategory m-auto">
         {{ form_start(form) }}
         {{ form_widget(form) }}
-        <button type="submit">Add category</button>
+        <button class="btn buttonNew" type="submit">Add category</button>
         {{ form_end(form) }}
-    </div>
+            </article>
+        </section>
 {% endblock %}

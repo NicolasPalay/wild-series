@@ -55,6 +55,9 @@ class Program
     #[joinTable(name:'actor_program')]
     private Collection $actors;
 
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->seasons = new ArrayCollection();
@@ -76,8 +79,10 @@ class Program
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
+        $this->slug = $this->createSlug($title);
         return $this;
+
+
     }
 
     public function getSynopsis(): ?string
@@ -171,5 +176,24 @@ class Program
         }
 
         return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    private function createSlug(string $title)
+    {
+        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title)));
+        return $slug;
     }
 }

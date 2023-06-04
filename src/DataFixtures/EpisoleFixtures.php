@@ -43,6 +43,8 @@ class EpisoleFixtures extends Fixture implements DependentFixtureInterface
                     $episode = new Episode();
                     $episode->setSeason($this->getReference('season_' . $seas . '-' . $numberSeason['title']));
                     $episode->setTitle($nameEpisode);
+                    $duration= (int)$numberSeason['length'];
+$episode->setDuration($duration);
                     $manager->persist($episode);
                 }
 

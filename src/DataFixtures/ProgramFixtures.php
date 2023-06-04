@@ -44,6 +44,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
             $program->setTitle($show['title']);
             $program->setSynopsis($show['description']);
             $program->setPoster($show['images']['poster']);
+
             $genres = $show['genres'];
 
             foreach ( $genres as $key => $genre) {

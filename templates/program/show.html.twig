@@ -16,6 +16,7 @@
 
             <em><a href="{{ path("category_show", { categoryName: program.category.name, id: program.category.id }) }}">Catégorie
                     : {{ program.category.name }}</a></em>
+            <em>durée totale de la série : {{ programDuration }} heure</em>
             <ul>
                 {% for actor in program.actors %}
                     <li>{{ actor.name }}</li>
@@ -25,7 +26,7 @@
             </ul>
             <p>{{ program.synopsis }}</p>
             <div class="seasonProgram">
-                {% for season in seasons %}
+                {% for season in program.seasons %}
                     <div>
                         <em>Saison : {{ season.number }}</em>
                         <em>année : {{ season.year }}</em>

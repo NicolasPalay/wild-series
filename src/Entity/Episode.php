@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
-class Episode extends \App\Repository\EpisodeRepository
+class Episode
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,6 +22,9 @@ class Episode extends \App\Repository\EpisodeRepository
 
     #[ORM\Column]
     private ?int $duration = null;
+
+    #[ORM\ManyToOne(inversedBy: 'episodes')]
+    private ?User $owner = null;
 
     public function getId(): ?int
     {
@@ -60,6 +63,18 @@ class Episode extends \App\Repository\EpisodeRepository
     public function setDuration(int $duration): self
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

@@ -29,6 +29,7 @@ class EpisodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+           $episode->setOwner($this->getUser());
             $episodeRepository->save($episode, true);
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
@@ -55,6 +56,10 @@ class EpisodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($this->getUser() !== $episode->getOwner()) {
+                // If not the owner, throws a 403 Access Denied exception
+                throw $this->createAccessDeniedException('Only the owner can edit the program!');
+            }
             $episodeRepository->save($episode, true);
 
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);

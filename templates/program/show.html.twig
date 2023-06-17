@@ -13,18 +13,24 @@
             {% else %}
                 <img src="/uploads/{{ program.poster }}" alt="">
             {% endif %}
-
-            <em><a href="{{ path("category_show", { categoryName: program.category.name, id: program.category.id }) }}">Catégorie
-                    : {{ program.category.name }}</a></em>
-            <em>durée totale de la série : {{ programDuration }} heure</em>
             <ul>
+           <li>
+               <em>
+                   <a href="{{ path("category_show", { categoryName: program.category.name, id: program.category.id }) }}">Catégorie
+                    : {{ program.category.name }}</a>
+               </em>
+           </li>
+               <li>
+                   <em>durée totale de la série : {{ programDuration }} heure</em>
+               </li>
                 {% for actor in program.actors %}
                     <li>{{ actor.name }}</li>
                 {% else %}
                     <li>Aucun acteur pour cette série</li>
                 {% endfor %}
+                <li><p>{{ program.synopsis }}</p></li>
             </ul>
-            <p>{{ program.synopsis }}</p>
+
             <div class="seasonProgram">
                 {% for season in program.seasons %}
                     <div>

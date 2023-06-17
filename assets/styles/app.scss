@@ -11,6 +11,10 @@
 body {
     background-color: #2e2d2c;
 }
+
+.container, .container-fluid, .container-xxl, .container-xl, .container-lg, .container-md, .container-sm{
+    width:auto;
+}
 a{text-decoration: none}
 a:hover{color:#C7A12E !important;}
 h1, a,a:active,p,li,.active, td{color:white;}
@@ -94,15 +98,15 @@ aside li div{padding:10px;}
 .listOneSery{margin: 30px auto}
 .listOneSery div {width:60%}
 .listOneSery em{display: block;color:white}
-.listOneSery p {margin:30px 20px}
+.listOneSery p {margin:30px 20px; width :300px}
 div.seasonProgram{display: flex;flex-direction: row;width: 100%}
 .seasonProgram> div {width: 100%}
 
 /*New catagory program season episode*/
-.labelCategory,.labelProgram,#episode label[for="episode_season"],#program label[for='program_actors'],
+.labelCategory,.labelProgram,#episode label[for="episode_season"],#search_program label[for="search_program_search"],#program label[for='program_actors'],
 #program label[for="program_category"], #season label[for='season_program'],
 #category label:last-child{color:#C7A12E;display:block}
-.inputCategory, .inputProgram, #program select:last-child, #season select:last-child{width:300px}
+.inputCategory, .inputProgram, #program select:last-child, #season select:last-child, #search_program input{width:300px;}
 .buttonNew{background-color: #6979c7;margin:20px auto 40px}
 
 .buttonNew:hover{background-color: #C7A12E;}

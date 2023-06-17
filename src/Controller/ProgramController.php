@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Episode;
 use App\Entity\Program;
 use App\Entity\Season;
+use App\Form\SearchProgramType;
 use App\Services\ProgramDuration;
 use App\Form\ProgramType;
 use App\Repository\EpisodeRepository;
@@ -15,11 +16,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
+//use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 
 class ProgramController extends AbstractController
@@ -37,6 +40,15 @@ class ProgramController extends AbstractController
 
     public function index(ProgramRepository $programRepository, Request $request): Response
     {
+        $form = $this->createForm(SearchProgramType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $search = $form->getData()['search'];
+            $programs = $programRepository->findLikeName($search);
+        } else {
+            $programs = $programRepository->findAll();
+        }
 
         $session=$request->getSession();
         if ($session->has('nbVisite')) {
@@ -47,29 +59,29 @@ class ProgramController extends AbstractController
         }
         $session->set('nbVisite',$nbreVisite);
 
-        $programs = $programRepository->findAll();
+
 
         return $this->render('program/index.html.twig', [
-            'programs' => $programs
+            'programs' => $programs, 'form' => $form,
         ]);
     }
 
 #[Route('/program/new',name : 'program_new')]
-    public function new(Request $request, ProgramRepository $programRepository,SluggerInterface $slugger):Response
+    public function new(Request $request,  MailerInterface $mailer,ProgramRepository $programRepository,SluggerInterface $slugger):Response
     {
     $program = new Program();
     $form = $this->createForm(ProgramType::class,$program);
     $form->handleRequest($request);
+
     if ($form->isSubmitted() && $form->isValid()) {
-
-
         /** @var UploadedFile $file */
         $file = $form->get('poster')->getData();
         //dd($file);
+
         if ($file) {
             $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $afeFilename = $slugger->slug($originalFilename);
-            $newFilename = $afeFilename. '-' .uniqid().'.'.$file->guessExtension();
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename. '-' .uniqid().'.'.$file->guessExtension();
             try {
                 $file->move(
                     $this->getParameter('file_directory'),
@@ -78,16 +90,24 @@ class ProgramController extends AbstractController
             } catch (FileException $e) {
                 echo 'handle exception if something happens during file upload';
             }
-        }
+
         $program->setPoster($newFilename);
         $selectedActors = $form->get('actors')->getData();
         foreach ($selectedActors as $actor) {
             $program->addActor($actor);
             $actor->addProgram($program);
             }
-
+    }
+        $program->setOwner($this->getUser());
         $programRepository->save($program, true);
+        $email = (new Email())
+         ->from('your_email@example.com')
+            ->to('your_email@example.com')
+            ->subject('Une nouvelle série vient d\'être publiée !')
+            ->html('<p>Une nouvelle série vient d\'être publiée sur Wild Séries !</p>');
 
+        $mailer->send($email);
+        $this->getParameter('mailer_from');
         $this->addFlash('success', 'The new program has been created');
         return $this->redirectToRoute('program_index');
     }
@@ -100,16 +120,11 @@ class ProgramController extends AbstractController
     public function show(Program $program,Season $season, Episode $episode, ProgramDuration $programDuration
     ): Response
     {
-        //$program = $programRepository->findOneBy(['id' => $id]);
-        //$seasons = $seasonRepository->findby(['program' => $program]);
-       // $episodes = $episodeRepository->findby(['season' => $seasons]);
-
-
-        return $this->render('program/show.html.twig', [
-            'program' => $program,
+          return $this->render('program/show.html.twig', [
+           'program' => $program,
            'seasons'=>$season,
            'episodes'=>$episode,
-            'programDuration' => $programDuration->calculate($program,$season, $episode)
+           'programDuration' => $programDuration->calculate($program,$season, $episode)
         ]);
     }
     #[Route('/program/{id}', name: 'program_delete', methods: ['POST'])]

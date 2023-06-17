@@ -6,7 +6,14 @@
     <img class="imgHome" src="{{ asset('build/images/serie-tv-v.jpg') }}" alt=""/>
     <h1>Toutes les series</h1>
     <main>
+
         <section>
+            <article class="listAllCategory m-auto mb-5 p-2">
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                <button class="btn buttonNew">Search</button>
+                {{ form_end(form) }}
+            </article>
             Bonjour, c'est votre visite numéro {{ app.session.get('nbVisite') }}
             <ul class="listAllSeries">
                 {% for program in programs %}

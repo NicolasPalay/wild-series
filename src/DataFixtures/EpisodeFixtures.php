@@ -3,13 +3,14 @@
 namespace App\DataFixtures;
 
 use App\Entity\Episode;
+use App\Repository\EpisodeRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Response;
 
-class EpisoleFixtures extends Fixture implements DependentFixtureInterface
+class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
     public function series(): ?array
     {
@@ -34,18 +35,21 @@ class EpisoleFixtures extends Fixture implements DependentFixtureInterface
     const SEASONS =[
         1,2,3,4
     ];
-    public function load(ObjectManager $manager): void
+ public function load(ObjectManager $manager): void
     {
         $seasons = $this->series();
+
         foreach (self::SEASONS as $seas) {
+
             foreach ($seasons as $numberSeason) {
+
                 foreach (self::EPISODES as $nameEpisode) {
-                    $episode = new Episode();
-                    $episode->setSeason($this->getReference('season_' . $seas . '-' . $numberSeason['title']));
-                    $episode->setTitle($nameEpisode);
+                    $episode2 = new Episode();
+                    $episode2->setSeason($this->getReference('season_' . $seas . '-' . $numberSeason['title']));
+                    $episode2->setTitle($nameEpisode);
                     $duration= (int)$numberSeason['length'];
-$episode->setDuration($duration);
-                    $manager->persist($episode);
+                    $episode2->setDuration($duration);
+                    $manager->persist($episode2);
                 }
 
             }

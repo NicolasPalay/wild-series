@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 #[Route('/category',name:'category_')]
 class CategoryController extends AbstractController
@@ -21,8 +22,10 @@ class CategoryController extends AbstractController
      * @return Response
      */
         #[Route('/', name: 'index')]
+        #[IsGranted('ROLE_ADMIN')]
     public function index(CategoryRepository $categoryRepository): Response
     {
+
         $categories = $categoryRepository->findAll();
 
         return $this->render('category/index.html.twig', [
@@ -35,6 +38,7 @@ class CategoryController extends AbstractController
     #[Route('/new', name: 'new')]
     public function new(Request $request, CategoryRepository $categoryRepository): Response
     {
+
         $category = new Category();
 
         // Create the form, linked with $category
@@ -43,6 +47,7 @@ class CategoryController extends AbstractController
         $form->handleRequest($request);
         //soumet a requete
         if ($form->isSubmitted()) {
+
             $categoryRepository->save($category, true);
 
             // Redirect to categories list
@@ -84,8 +89,6 @@ class CategoryController extends AbstractController
             'programs' => $programs
         ]);
     }
-
-
 
 
 }
